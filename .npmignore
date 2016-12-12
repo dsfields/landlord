@@ -1,0 +1,13 @@
+.eslintrc
+.git
+.gitignore
+.idea
+.npmrc
+.travis.yml
+.istanbul.yml
+coverage
+node_modules
+CHANGELOG.md
+CONTRIBUTING.md
+npm-debug.log
+tests

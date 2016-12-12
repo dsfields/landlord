@@ -1,0 +1,33 @@
+{
+  "name": "landlord",
+  "longName": "Landlord",
+  "description": "A lease algorithm implementation for Node.js.",
+  "version": "0.0.1",
+
+  "dependencies": {
+    "bluebird": "~3.4.6",
+    "elv": "^1.0.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0"
+  },
+  "keywords": [
+    "lease",
+    "transaction",
+    "atomic",
+    "distributed"
+  ],
+  "license": "MIT",
+  "main": "./lib/squatter",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dsfields/squatter"
+  },
+  "scripts": {
+    "lint": "eslint ./**/*.js",
+    "test": "NODE_ENV=test istanbul cover _mocha tests/**/*.js"
+  }
+}
