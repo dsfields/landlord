@@ -20,7 +20,7 @@
     "distributed"
   ],
   "license": "MIT",
-  "main": "./lib/squatter",
+  "main": "./lib/landlord",
   "private": false,
   "repository": {
     "type": "git",
