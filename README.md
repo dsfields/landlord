@@ -10,7 +10,7 @@ Add `landlord` as a dependency in `package.json`:
 $ npm install landlord -S
 ```
 
-Then create instances of `Landlord` to issue a `Lease` on the entries you wish to insert.
+Then create instances of `Landlord` to issue `Lease` instances on the entries you wish to insert.
 
 ```js
 const Landlord = require('landlord');
@@ -57,7 +57,7 @@ The primary interface to the `landlord` module.  The `Landlord` class is respons
 
         - `store`: _(required)_ the backing store that documents are inserted into.  See ["Stores"](#stores) for more information.
 
-        - `ttl`: _(optional)_ the time-to-live value in milliseconds to assign to documents when they are initially inserted.  This is to ensure documents are left as cruft in the data store in the event of a failure.  The default value is `5000`.
+        - `ttl`: _(optional)_ the time-to-live value in milliseconds to assign to documents when they are initially inserted.  This is to ensure documents are not left as cruft in the data store in the event of a failure.  The default value is `5000`.
 
   * __Properties__
 
@@ -71,7 +71,7 @@ The primary interface to the `landlord` module.  The `Landlord` class is respons
 
       _Parameters_
 
-        - `docs`: _(required)_ an object or `Map` where each key is a key wish to add to the lease, and the value is the contents of the document.
+        - `docs`: _(required)_ an object or `Map` where each key is a key you need to add to the lease, and the value is the contents of the document.
 
         - `callback`: _(optional)_ a standard Node.js callback where the resolved value is an instance of `Lease`.
 
@@ -81,13 +81,13 @@ Represents a set of documents who's keys have been reserved in a key-value data 
 
   * __Properties__
 
-    +  `Lease.prototype.documents`: gets a `Map` of documents reserved by the `Lease`, where each key reserved in the data store, and the value is an object with the following keys:
+    +  `Lease.prototype.documents`: gets a `Map` of documents reserved by the `Lease`, where each key is a key reserved in the data store, and the value is an object with the following keys:
 
       - `etag`: a string value of any version information returned from the store.  This value is not guaranteed to be set until after the lease has been confirmed.
 
       - `value`: the document contents.
 
-    + `Lease.prototype.isCancelled`: gets a `Boolean` indicating wether or not the `Lease` has been cancelled.
+    + `Lease.prototype.isCancelled`: gets a `Boolean` indicating whether or not the `Lease` has been cancelled.
 
     + `Lease.prototype.isConfirmed`: gets a `Boolean` indicating whether or not the `Lease` has been confirmed.
 
@@ -159,7 +159,7 @@ A store is where documents added to a lease are persisted.  An instance of a sto
 
       - `err`: _(required)_ an internal, catastrophic error that has occurred, otherwise `null` or `undefined`.  A single failed insert should not result in this parameter having a value.
 
-      - `result`: _(optional)_ a `Map` containing all of the keys originally provided by `docs`.  This argument required if `err` is empty.  Each value is an object that summarizes the result of the insert operation, and contains the following keys:
+      - `result`: _(optional)_ a `Map` containing all of the keys originally provided by `docs`.  This argument is required if `err` is empty.  Each value is an object that summarizes the result of the insert operation, and contains the following keys:
 
         - `etag`: _(optional)_ a string that contains the version value for the inserted document.
 
@@ -184,6 +184,18 @@ A store is where documents added to a lease are persisted.  An instance of a sto
       - `ttl`: _(required)_ an integer value indicating the time-to-live (in milliseconds) for each entry specified by the `keys` argument.  If this value is `0`, the TTL is removed, and the entry will live indefinitely.
 
     + `callback`: _(required)_ a standard Node.js callback function.
+
+      - `err`: _(required)_ an internal, catastrophic error that has occurred, otherwise `null` or `undefined`.  A single failed touch operation should not result in this parameter having a value.
+
+      - `result`: _(optional)_ a `Map` containing all of the keys originally provided by `keys`.  This argument is required if `err` is empty.  Each value is an object that summarizes the result of the touch operation, and contains the following keys:
+
+        - `etag`: _(optional)_ a string that contains the version value for the inserted document.
+
+        - `success`: _(required)_ a `Boolean` indicating whether or not the insert operation was successful.
+
+        - `isMissing`: _(required)_ a `Boolean` indicating whether or not a failure was the result of a missing key.  If this value is `true`, then the associated lease will enter into an expired state.
+
+        - `error`: _(optional)_ an error that occurred as a result of a failed insert.  This is only needed if the failure was not the result of a missing key.
 
 ### Promisified Methods
 
