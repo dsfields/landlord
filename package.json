@@ -1,7 +1,7 @@
 {
   "name": "landlord",
   "longName": "Landlord",
-  "description": "A lease algorithm implementation for Node.js.",
+  "description": "Multi-entry transaction control for distributed KV stores.",
   "version": "0.0.1",
 
   "dependencies": {
@@ -24,7 +24,7 @@
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/dsfields/squatter"
+    "url": "https://github.com/dsfields/landlord"
   },
   "scripts": {
     "lint": "eslint ./**/*.js",
