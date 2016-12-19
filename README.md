@@ -2,6 +2,20 @@
 
 A common problem with document databases that rely on key-value data stores is how to handle the situation where a document is the composite of multiple entries.  Ensuring all keys get added without collision, and rolling back when a failure occurs, can add a significant amount of complexity.  Landlord manages this complexity for you.
 
+__Contents__
+
+  * [Usage](#usage)
+  * [API](#api)
+    + [Class: `Landlord`](#class-landlord)
+    + [Class: `Lease`](#class-lease)
+    + [Errors](#errors)
+  * [Stores](#stores)
+    + [Promisified Methods](#promisified-methods)
+    + [Implementations](#implementations)
+  * [Limitations](#limitations)
+    + [Atomicity](#atomicity)
+    + [Inserts](#inserts)
+
 ## Usage
 
 Add `landlord` as a dependency in `package.json`:
@@ -211,8 +225,18 @@ The following are known `landlord` store implementations. _If you've created one
 
 ## Limitations
 
+There are a couple of limitations that implementers should keep in mind while using `landlord`.
+
+### Atomicity
+
 The `landlord` module cannot provide true transactional atomicity of multiple entries, as, this is a feature that typically must be supported by a database engine.  While `landlord` utilizes a number of safeguards to prevent errant data from being persisted, it is not a guarantee.
 
 For example, in the event of a catastrophic failure of a `landlord`-powered application in the middle of a confirmation operation, it's possible only a subset of documents on a lease will be permanently persisted.
 
 For this reason, we recommend storing documents that contain references to all sibling documents, or a single primary.  This way orphaned documents can be cleaned up by application logic or a secondary process.
+
+### Inserts
+
+The primary use case for `landlord` is creating keys to represent unique constraints for sub keys of documents, and, so, at this time `landlord` only supports insert operations.  This will likely change in a future release.
+
+However, the confirmation of keys added to a `landlord` lease can still be dictated by the success of one additional operation (any operation) by calling the `confirm()` or `cancel()` methods on `Lease` accordingly.
