@@ -28,7 +28,7 @@ Then create instances of `Landlord` to issue `Lease` instances on the entries yo
 
 ```js
 const Landlord = require('landlord');
-const Store = require('landlord-memory');
+const Store = require('landlord-my-impl');
 
 const landlord = new Landlord({
   store: new Store()
@@ -163,7 +163,7 @@ A store is where documents added to a lease are persisted.  An instance of a sto
 
   * `insert(docs, options, callback)`: performs an insert operation that will fail for any document who's key already exist in the store.  Parameters:
 
-    + `docs`: _(required)_ a `Map` where each key is a key wish to add to the lease, and the value is the contents of the document.
+    + `docs`: _(required)_ a `Map` where each key is a key you wish to add to the lease, and the value is the contents of the document.
 
     + `options`: _(required)_ an object with the following keys:
 
@@ -181,13 +181,21 @@ A store is where documents added to a lease are persisted.  An instance of a sto
 
         - `isCollision`: _(required)_ a `Boolean` indicating whether or not the insert failed as a result of a key collision.
 
-        - `error`: _(optional)_ an error that occurred as a result of a failed insert.  This is only needed if the failure was not the result of a key collision.
+        - `err`: _(optional)_ an error that occurred as a result of a failed insert.  This is only needed if the failure was not the result of a key collision.
 
   * `remove(keys, callback)`: performs a remove operation, which should succeed regardless if the key exists in the store or not.  Parameters:
 
     + `keys`: _(required)_ an array or `Set` of keys to remove.
 
-    + `callback`: _(required)_ a standard Node.js callback function.
+    + `callback`: _(required)_ a standard Node.js callback function with the following parameters:
+
+      - `err`: _(required)_ an internal, catastrophic error that has occurred, otherwise `null` or `undefined`.  A single failed remove operation should not result in this parameter having a value.
+
+      - `result`: _(optional)_ an object that summarizes the remove operation.  The object should have the following keys:
+
+        - `succeeded`: _(required)_ an array of keys that were successfully removed.  If a key did not exist when the remove was attempted, it should be counted as succeeded.
+
+        - `failed`: _(required)_ an array of keys that were not removed, and remain in the store.
 
   * `touch(keys, options, callback)`: extends the time-to-live for the provided keys.  Parameters:
 
@@ -197,7 +205,7 @@ A store is where documents added to a lease are persisted.  An instance of a sto
 
       - `ttl`: _(required)_ an integer value indicating the time-to-live (in milliseconds) for each entry specified by the `keys` argument.  If this value is `0`, the TTL is removed, and the entry will live indefinitely.
 
-    + `callback`: _(required)_ a standard Node.js callback function.
+    + `callback`: _(required)_ a standard Node.js callback function with the following parameters:
 
       - `err`: _(required)_ an internal, catastrophic error that has occurred, otherwise `null` or `undefined`.  A single failed touch operation should not result in this parameter having a value.
 
@@ -209,7 +217,7 @@ A store is where documents added to a lease are persisted.  An instance of a sto
 
         - `isMissing`: _(required)_ a `Boolean` indicating whether or not a failure was the result of a missing key.  If this value is `true`, then the associated lease will enter into an expired state.
 
-        - `error`: _(optional)_ an error that occurred as a result of a failed insert.  This is only needed if the failure was not the result of a missing key.
+        - `err`: _(optional)_ an error that occurred as a result of a failed insert.  This is only needed if the failure was not the result of a missing key.
 
 ### Promisified Methods
 
@@ -218,8 +226,6 @@ Store implementations can also provide `*Async()` versions of each method listed
 ### Implementations
 
 The following are known `landlord` store implementations. _If you've created one not listed here, please add it to the README.md file via pull request in the [GitHub project](https://github.com/dsfields/landlord)._
-
-  * [`landlord-memory`](https://www.npmjs.com/package/landlord-memory)
 
   * [`landlord-couchbase`](https://www.npmjs.com/package/landlord-couchbase)
 
